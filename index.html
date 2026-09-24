@@ -628,6 +628,42 @@ const DemoDB = Object.assign(makeLocalDB("nl_preds_demo"), {
   }
 });
 
+/* ----- live score straight from ESPN (the phone asks ESPN itself, because ESPN blocks Cloudflare) ----- */
+const ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.nations/scoreboard";
+const ALIASES = { POR:["portugal"], WAL:["wales"], NOR:["norway"], DEN:["denmark"], ITA:["italy"], BEL:["belgium"], TUR:["turkey","turkiye","t\u00fcrkiye"], FRA:["france"], CZE:["czechia","czech republic"], CRO:["croatia"], ENG:["england"], ESP:["spain"], NED:["netherlands","holland"], GER:["germany"], SRB:["serbia"], GRE:["greece"] };
+const teamIs = (t, code) => { const x = [t && t.displayName, t && t.shortDisplayName, t && t.name, t && t.location].join(" ").toLowerCase(); return (ALIASES[code] || []).some(a => x.includes(a)); };
+const liveCache = {};
+async function espnLive(m) {
+  const now = Date.now();
+  if (now < m.ko - 15 * 60e3 || now > m.ko + 4 * 3600e3) return null;
+  const c = liveCache[m.id]; if (c && now - c.t < 30000) return c.v;
+  let v = null;
+  try {
+    const d = new Date(m.ko), ymd = d.getUTCFullYear() + String(d.getUTCMonth() + 1).padStart(2, "0") + String(d.getUTCDate()).padStart(2, "0");
+    const r = await fetch(ESPN + "?dates=" + ymd);
+    if (r.ok) {
+      const data = await r.json(), H = m.home.code, A = m.away.code;
+      const ev = (data.events || []).find(e => { const cp = e.competitions && e.competitions[0]; if (!cp) return false; const ts = cp.competitors.map(x => x.team); return ts.some(t => teamIs(t, H)) && ts.some(t => teamIs(t, A)); });
+      if (ev) {
+        const cp = ev.competitions[0], home = cp.competitors.find(x => teamIs(x.team, H)), away = cp.competitors.find(x => teamIs(x.team, A));
+        const state = ev.status && ev.status.type && ev.status.type.state;
+        if (state !== "pre") v = {
+          status: state === "post" ? "FT" : "LIVE",
+          minute: parseInt(ev.status.displayClock, 10) || (state === "post" ? 90 : 0),
+          h: Number(home.score) || 0, a: Number(away.score) || 0,
+          events: (cp.details || []).filter(x => x.scoringPlay).map(x => ({
+            min: parseInt(x.clock && x.clock.displayValue, 10) || null,
+            team: String(x.team && x.team.id) === String(home.team.id) ? "H" : "A",
+            player: (x.athletesInvolved && x.athletesInvolved[0] && (x.athletesInvolved[0].displayName || x.athletesInvolved[0].fullName)) || "Unknown"
+          }))
+        };
+      }
+    }
+  } catch (e) {}
+  liveCache[m.id] = { t: now, v };
+  return v;
+}
+
 /* ----- the shared board (your Worker) ----- */
 const ApiDB = {
   base() { return CONFIG.API_BASE.replace(/\/$/, ""); },
@@ -650,10 +686,10 @@ const ApiDB = {
       if (!document.hidden) {
         try {
           const r = await fetch(this.base() + "/board?match=" + encodeURIComponent(matchId) + "&ko=" + m.ko);
-          if (r.ok && !stop) cb(await r.json());
+          if (r.ok && !stop) { const data = await r.json(); if (!data.live) data.live = await espnLive(m); if (!stop) cb(data); }
         } catch (e) {}
       }
-      if (!stop) timer = setTimeout(load, 20000);      // refresh every 20 seconds
+      if (!stop) timer = setTimeout(load, 60000);      // refresh every 60 seconds
     };
     load();
     return () => { stop = true; clearTimeout(timer); };
