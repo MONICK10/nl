@@ -184,7 +184,7 @@
   .arow:first-of-type { margin-top:10px; }
   .arow .ic { width:22px; text-align:center; font-weight:900; flex:none; }
   .arow .qq { flex:1; min-width:0; } .arow .qq small { display:block; color:var(--muted); font-size:12px; }
-  .ic.correct { color:var(--good); } .ic.match { color:var(--accent); } .ic.wrong { color:var(--bad); } .ic.pending { color:var(--muted); }
+  .ic.p10 { color:var(--good); } .ic.p5 { color:var(--accent); } .ic.p0 { color:var(--bad); }
   .boardhead { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--muted); letter-spacing:.1em; padding:0 4px; }
   .list { position:relative; }
   .lrow { position:absolute; left:0; right:0; height:58px; display:flex; align-items:center; gap:10px; padding:0 12px; background:var(--card); border:1px solid var(--line); border-radius:14px; transition:transform .7s cubic-bezier(.3,.8,.3,1); overflow:hidden; }
@@ -391,22 +391,22 @@ const CONFIG = {
    CHECK the names before you post: injuries and call-ups change.
    ===================================================================== */
 const TEAMS = {
-  POR: { name: "Portugal",    stars: ["Ronaldo", "Bruno Fernandes"] },
-  WAL: { name: "Wales",       stars: [] },
-  NOR: { name: "Norway",      stars: ["Erling Haaland", "Martin \u00d8degaard"] },
-  DEN: { name: "Denmark",     stars: [] },
-  ITA: { name: "Italy",       stars: [] },
-  BEL: { name: "Belgium",     stars: ["Kevin De Bruyne"] },
-  TUR: { name: "T\u00fcrkiye", stars: [] },
-  FRA: { name: "France",      stars: ["Kylian Mbapp\u00e9", "Ousmane Demb\u00e9l\u00e9"] },
-  CZE: { name: "Czechia",     stars: [] },
-  CRO: { name: "Croatia",     stars: [] },
-  ENG: { name: "England",     stars: ["Harry Kane", "Jude Bellingham"] },
-  ESP: { name: "Spain",       stars: ["Lamine Yamal", "Pedri"] },
-  NED: { name: "Netherlands", stars: ["Cody Gakpo", "Xavi Simons"] },
-  GER: { name: "Germany",     stars: ["Florian Wirtz", "Jamal Musiala"] },
-  SRB: { name: "Serbia",      stars: [] },
-  GRE: { name: "Greece",      stars: [] }
+  POR: { name: "Portugal",    stars: ["Ronaldo", "Bruno Fernandes"], wing: ["Rafael Le\u00e3o", "Pedro Neto"], mid: ["Bruno Fernandes", "Vitinha"] },
+  WAL: { name: "Wales",       stars: [], wing: [], mid: [] },
+  NOR: { name: "Norway",      stars: ["Erling Haaland", "Martin \u00d8degaard"], wing: [], mid: [] },
+  DEN: { name: "Denmark",     stars: [], wing: [], mid: [] },
+  ITA: { name: "Italy",       stars: [], wing: ["Federico Chiesa", "Nicol\u00f2 Zaniolo"], mid: ["Nicol\u00f2 Barella", "Sandro Tonali"] },
+  BEL: { name: "Belgium",     stars: ["Kevin De Bruyne"], wing: ["J\u00e9r\u00e9my Doku", "Leandro Trossard"], mid: ["Kevin De Bruyne", "Youri Tielemans"] },
+  TUR: { name: "T\u00fcrkiye", stars: [], wing: [], mid: [] },
+  FRA: { name: "France",      stars: ["Kylian Mbapp\u00e9", "Ousmane Demb\u00e9l\u00e9"], wing: ["Ousmane Demb\u00e9l\u00e9", "Kylian Mbapp\u00e9"], mid: ["Aur\u00e9lien Tchouam\u00e9ni", "Adrien Rabiot"] },
+  CZE: { name: "Czechia",     stars: [], wing: [], mid: [] },
+  CRO: { name: "Croatia",     stars: [], wing: [], mid: [] },
+  ENG: { name: "England",     stars: ["Harry Kane", "Jude Bellingham"], wing: ["Bukayo Saka", "Phil Foden"], mid: ["Jude Bellingham", "Declan Rice"] },
+  ESP: { name: "Spain",       stars: ["Lamine Yamal", "Pedri"], wing: ["Lamine Yamal", "Nico Williams"], mid: ["Pedri", "Fabi\u00e1n Ruiz"] },
+  NED: { name: "Netherlands", stars: ["Cody Gakpo", "Xavi Simons"], wing: ["Cody Gakpo", "Steven Bergwijn"], mid: ["Xavi Simons", "Frenkie de Jong"] },
+  GER: { name: "Germany",     stars: ["Florian Wirtz", "Jamal Musiala"], wing: ["Jamal Musiala", "Leroy San\u00e9"], mid: ["Florian Wirtz", "Joshua Kimmich"] },
+  SRB: { name: "Serbia",      stars: [], wing: [], mid: [] },
+  GRE: { name: "Greece",      stars: [], wing: [], mid: [] }
 };
 
 /* =====================================================================
@@ -435,7 +435,7 @@ const MATCHES_RAW = [
   ["FRA", "BEL", "2026-10-05T20:45:00+02:00", "A1"], ["ITA", "TUR", "2026-10-05T20:45:00+02:00", "A1"],
   ["CRO", "ESP", "2026-10-06T20:45:00+02:00", "A3"], ["ENG", "CZE", "2026-10-06T20:45:00+02:00", "A3"]
 ];
-function mkTeam(code) { const t = TEAMS[code] || { name: code, stars: [] }; return { code, name: t.name, stars: t.stars }; }
+function mkTeam(code) { const t = TEAMS[code] || { name: code, stars: [], wing: [], mid: [] }; return { code, name: t.name, stars: t.stars, wing: t.wing || [], mid: t.mid || [] }; }
 const MATCHES = MATCHES_RAW.map(([h, a, ko, g]) => ({ id: h + "_" + a, home: mkTeam(h), away: mkTeam(a), ko: new Date(ko).getTime(), group: g, venue: "" }))
   .sort((x, y) => x.ko - y.ko);
 const DEMO_MATCH = { id: "demo", home: mkTeam("POR"), away: mkTeam("WAL"), ko: Date.now(), group: "DEMO", venue: "Demo stadium" };
@@ -513,17 +513,27 @@ const setFlag = (el, code) => { el.innerHTML = flagSVG(code); };
 const COUNT3 = [{ id: "0", label: "0" }, { id: "1", label: "1" }, { id: "2", label: "2" }, { id: "3+", label: "3 or more" }];
 function buildQuestions(m) {
   const H = m.home, A = m.away, qs = [];
-  qs.push({ id: "winner", kind: "winner", short: "Winner", tag: "MATCH", pts: 10, text: "Who will win?", opts: [{ id: "H", label: H.name }, { id: "D", label: "Draw" }, { id: "A", label: A.name }] });
-  qs.push({ id: "total", kind: "total", short: "Total goals", tag: "MATCH", pts: 10, text: "How many goals in the whole match?", opts: [{ id: "0-1", label: "0 to 1", lo: 0, hi: 1 }, { id: "2-3", label: "2 to 3", lo: 2, hi: 3 }, { id: "4+", label: "4 or more", lo: 4, hi: 99 }] });
-  qs.push({ id: "first", kind: "first", short: "First goal", tag: "MATCH", pts: 10, text: "Which team scores first?", opts: [{ id: "H", label: H.name }, { id: "A", label: A.name }, { id: "N", label: "No goals" }] });
-  qs.push({ id: "hg", kind: "count", side: "H", short: H.name + " goals", tag: H.name.toUpperCase(), pts: 10, text: "How many goals will " + H.name + " score?", opts: COUNT3 });
-  qs.push({ id: "ag", kind: "count", side: "A", short: A.name + " goals", tag: A.name.toUpperCase(), pts: 10, text: "How many goals will " + A.name + " score?", opts: COUNT3 });
-  const stars = H.stars.concat(A.stars);
-  if (stars.length) qs.push({ id: "scorer", kind: "scorer", players: stars, short: "Who scores", tag: "PLAYERS", pts: 15, text: "Who will score a goal?",
-    opts: stars.map(n => ({ id: n, label: n })).concat([{ id: "other", label: "Someone else" }, { id: "none", label: "Nobody scores" }]) });
+  qs.push({ id: "winner", kind: "winner", short: "Winner", tag: "MATCH", text: "Who will win?", opts: [{ id: "H", label: H.name }, { id: "D", label: "Draw" }, { id: "A", label: A.name }] });
+  qs.push({ id: "total", kind: "total", short: "Total goals", tag: "MATCH", text: "How many goals in the whole match?", opts: [{ id: "0-1", label: "0 to 1", lo: 0, hi: 1 }, { id: "2-3", label: "2 to 3", lo: 2, hi: 3 }, { id: "4-5", label: "4 to 5", lo: 4, hi: 5 }, { id: "6+", label: "6 or more", lo: 6, hi: 99 }] });
+  qs.push({ id: "first", kind: "first", short: "First goal", tag: "MATCH", text: "Which team scores first?", opts: [{ id: "H", label: H.name }, { id: "A", label: A.name }, { id: "N", label: "No goals" }] });
+  qs.push({ id: "hg", kind: "count", side: "H", short: H.name + " goals", tag: H.name.toUpperCase(), text: "How many goals will " + H.name + " score?", opts: COUNT3 });
+  qs.push({ id: "ag", kind: "count", side: "A", short: A.name + " goals", tag: A.name.toUpperCase(), text: "How many goals will " + A.name + " score?", opts: COUNT3 });
+  qs.push({ id: "btts", kind: "btts", short: "Both score?", tag: "MATCH", text: "Will both teams score?", opts: [{ id: "Y", label: "Yes, both score" }, { id: "N", label: "No" }] });
+  qs.push({ id: "margin", kind: "margin", short: "Winning margin", tag: "MATCH", text: "By how many goals will it be decided?", opts: [{ id: "draw", label: "It's a draw" }, { id: "one", label: "By 1 goal" }, { id: "two", label: "By 2 goals" }, { id: "three", label: "By 3 or more" }] });
+  qs.push({ id: "parity", kind: "parity", short: "Odd or even", tag: "MATCH", text: "Total goals: odd or even?", opts: [{ id: "odd", label: "Odd (1, 3, 5...)" }, { id: "even", label: "Even (0, 2, 4...)" }] });
+  qs.push({ id: "early", kind: "early", short: "Early goal", tag: "MATCH", text: "Will there be a goal in the first 15 minutes?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  const wing = H.wing.concat(A.wing), mid = H.mid.concat(A.mid);
+  if (wing.length >= 2 && mid.length >= 2) {
+    qs.push({ id: "impact", kind: "impact", short: "Who makes an impact", tag: "PLAYERS", wing: wing, mid: mid,
+      text: "Pick 2 wingers and 2 midfielders you think will score today." });
+  } else {
+    const stars = H.stars.concat(A.stars);
+    if (stars.length) qs.push({ id: "impact", kind: "scorer", players: stars, short: "Who scores", tag: "PLAYERS", text: "Who will score a goal?",
+      opts: stars.map(n => ({ id: n, label: n })).concat([{ id: "other", label: "Someone else" }, { id: "none", label: "Nobody scores" }]) });
+    else qs.push({ id: "impact", kind: "late", short: "Late goal", tag: "MATCH", text: "Will there be a goal after the 75th minute?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  }
   return qs;
 }
-
 /* =====================================================================
    SCORING
    live = { status:"LIVE"|"FT", minute, h, a, events:[{min, team:"H"|"A", player}] }
@@ -543,52 +553,82 @@ const teamGoals = (live, side) => {
   const v = side === "H" ? live.h : live.a;
   return v != null ? v : evs(live).filter(e => e.team === side).length;
 };
-function evalQ(q, ans, live) {
-  if (!ans || !live) return "pending";
-  const ft = live.status === "FT";
-  const h = teamGoals(live, "H"), a = teamGoals(live, "A"), tot = h + a;
+function scorerNames(live) { return evs(live).map(e => e.player); }
+
+/* Replays the goals in order, so we can tell whether a prediction was EVER true,
+   not just whether it is true right now. */
+function scoreTimeline(live) {
+  const list = evs(live).slice().filter(e => e.team === "H" || e.team === "A")
+    .sort((x, y) => (x.min == null ? 999 : x.min) - (y.min == null ? 999 : y.min));
+  let h = 0, a = 0; const pts = [{ h, a }];
+  list.forEach(e => { if (e.team === "H") h++; else a++; pts.push({ h, a }); });
+  if (h !== live.h || a !== live.a) pts.push({ h: live.h, a: live.a });   // safety net if minutes are missing
+  return pts;
+}
+function isTrueAt(q, ans, h, a) {
+  const tot = h + a;
   switch (q.kind) {
-    case "winner": {
-      const cur = h > a ? "H" : h < a ? "A" : "D";
-      return ft ? (ans === cur ? "correct" : "wrong") : (ans === cur ? "match" : "pending");
-    }
-    case "total": {
-      const o = q.opts.find(x => x.id === ans);
-      if (tot > o.hi) return "wrong";
-      return ft ? (tot >= o.lo ? "correct" : "wrong") : (tot >= o.lo ? "match" : "pending");
-    }
-    case "first": {
-      if (tot === 0) return ft ? (ans === "N" ? "correct" : "wrong") : (ans === "N" ? "match" : "pending");
-      const f = evs(live).slice().sort((x, y) => (x.min == null ? 999 : x.min) - (y.min == null ? 999 : y.min))[0];
-      if (!f) return "pending";
-      return ans === f.team ? "correct" : "wrong";
-    }
-    case "count": {
-      const v = q.side === "H" ? h : a, n = parseInt(ans, 10);
-      if (ans.endsWith("+")) return v >= n ? "correct" : (ft ? "wrong" : "pending");
-      if (v > n) return "wrong";
-      if (v === n) return ft ? "correct" : "match";
-      return ft ? "wrong" : "pending";
-    }
-    case "scorer": {
-      const all = evs(live);
-      const other = all.filter(e => !q.players.some(p => nameMatch(e.player, p))).length;
-      if (ans === "none") return tot > 0 ? "wrong" : (ft ? "correct" : "match");
-      if (ans === "other") return other > 0 ? "correct" : (ft ? "wrong" : "pending");
-      return all.some(e => nameMatch(e.player, ans)) ? "correct" : (ft ? "wrong" : "pending");
-    }
+    case "winner": return ans === (h > a ? "H" : h < a ? "A" : "D");
+    case "total": { const o = q.opts.find(x => x.id === ans); return tot >= o.lo && tot <= o.hi; }
+    case "count": { const v = q.side === "H" ? h : a, n = parseInt(ans, 10); return ans.endsWith("+") ? v >= n : v === n; }
+    case "btts": return ans === "Y" ? (h > 0 && a > 0) : !(h > 0 && a > 0);
+    case "margin": { const d = Math.abs(h - a); const cur = d === 0 ? "draw" : d === 1 ? "one" : d === 2 ? "two" : "three"; return ans === cur; }
+    case "parity": return ans === (tot % 2 === 0 ? "even" : "odd");
   }
-  return "pending";
+  return false;
+}
+/* Every question is out of 10%. Three results only:
+     10%  it is true right now (or was true and can never be undone)
+      5%  it WAS true at some point, but is not true any more
+      0%  it has never been true
+   This means a lucky early guess (like "draw" at 0-0) only pays off
+   if the match actually finishes that way. */
+function tieredScore(q, ans, live) {
+  if (["winner", "total", "count", "btts", "margin", "parity"].includes(q.kind)) {
+    const pts = scoreTimeline(live);
+    let sawTrue = false, currentlyTrue = false;
+    pts.forEach((pt, i) => { const t = isTrueAt(q, ans, pt.h, pt.a); if (t) sawTrue = true; if (i === pts.length - 1) currentlyTrue = t; });
+    return currentlyTrue ? 10 : (sawTrue ? 5 : 0);
+  }
+  if (q.kind === "first") {
+    const list = evs(live).filter(e => e.team === "H" || e.team === "A").sort((x, y) => (x.min == null ? 999 : x.min) - (y.min == null ? 999 : y.min));
+    if (!list.length) return ans === "N" ? 10 : 0;             // no goal yet: "no goals" is true so far
+    if (ans === "N") return 5;                                  // it WAS true (no goals) before this goal, now it's not
+    return ans === list[0].team ? 10 : 0;                       // first scorer is decided the moment it happens
+  }
+  if (q.kind === "early" || q.kind === "late") {
+    const bound = q.kind === "early" ? 15 : 75;
+    const test = e => e.min != null && (q.kind === "early" ? e.min <= bound : e.min >= bound);
+    const happened = evs(live).some(test);
+    if (happened) return ans === "Y" ? 10 : 5;                  // "N" was true until this goal broke it
+    const windowOver = live.status === "FT" || (q.kind === "early" && live.minute && live.minute > bound);
+    if (windowOver) return ans === "N" ? 10 : 0;
+    return ans === "N" ? 10 : 0;                                // still open, nothing has happened yet
+  }
+  if (q.kind === "scorer") {
+    const names = scorerNames(live), other = names.filter(n => !q.players.some(p => nameMatch(n, p))).length;
+    if (ans === "none") return names.length ? 0 : 10;
+    if (ans === "other") return other ? 10 : 0;
+    return names.some(n => nameMatch(n, ans)) ? 10 : 0;
+  }
+  if (q.kind === "impact") {
+    const picks = (ans || "").split(",").filter(Boolean);
+    const names = scorerNames(live);
+    const hits = picks.filter(p => names.some(n => nameMatch(n, p))).length;
+    return hits >= 2 ? 10 : (hits === 1 ? 5 : 0);
+  }
+  return 0;
 }
 function evalPred(pred, live, qs) {
-  const st = {}; let total = 0, earned = 0, ok = 0, bad = 0;
+  const st = {}; let earned = 0, ok = 0, bad = 0;
   qs.forEach(q => {
-    const s = evalQ(q, pred.answers[q.id], live); st[q.id] = s; total += q.pts;
-    if (s === "correct" || s === "match") { earned += q.pts; ok++; } else if (s === "wrong") bad++;
+    const ans = pred.answers[q.id];
+    const pts = (ans && live) ? tieredScore(q, ans, live) : 0;
+    st[q.id] = pts; earned += pts;
+    if (pts >= 10) ok++; else if (pts === 0 && ans) bad++;
   });
-  return { pct: live ? Math.round(100 * earned / total) : null, st, ok, bad };
+  return { pct: live ? Math.round(earned) : null, st, ok, bad };
 }
-
 /* =====================================================================
    DATA LAYER
    Api   = your Cloudflare Worker (shared board for everyone)
@@ -618,7 +658,12 @@ function makeBots() {
   const qs = buildQuestions(DEMO_MATCH);
   return BOT_NAMES.map((name, i) => {
     const r = mulberry(i * 7919 + 13), answers = {};
-    qs.forEach(q => { answers[q.id] = (q.id === "winner" && r() < 0.7) ? "H" : q.opts[Math.floor(r() * q.opts.length)].id; });
+    qs.forEach(q => {
+      if (q.kind === "impact") {
+        const w = q.wing.slice().sort(() => r() - 0.5).slice(0, 2), m = q.mid.slice().sort(() => r() - 0.5).slice(0, 2);
+        answers[q.id] = w.concat(m).join(",");
+      } else answers[q.id] = (q.id === "winner" && r() < 0.7) ? "H" : q.opts[Math.floor(r() * q.opts.length)].id;
+    });
     return { matchId: "demo", name, team: "H", answers, pen: 3, ts: i + 1 };
   });
 }
@@ -908,7 +953,35 @@ function renderQuiz() {
   $("qCount").textContent = "QUESTION " + (Q.i + 1) + " OF " + Q.qs.length;
   $("qFill").style.width = ((Q.i + 1) / Q.qs.length * 100) + "%";
   $("qTag").textContent = q.tag; $("qText").textContent = q.text;
-  const box = $("qOpts"); box.innerHTML = ""; box.className = "opts" + (q.opts.length <= 3 && q.kind !== "count" ? " one" : "");
+  const box = $("qOpts"); box.innerHTML = "";
+  if (q.kind === "impact") {
+    box.className = "opts one";
+    const picks = (Q.ans[q.id] || "").split(",").filter(Boolean);
+    const group = (label, list, cap) => {
+      const h = document.createElement("div"); h.className = "qtag"; h.style.marginTop = "10px"; h.textContent = label; box.appendChild(h);
+      const wrap = document.createElement("div"); wrap.className = "opts one"; box.appendChild(wrap);
+      list.forEach(name => {
+        const on = picks.includes(name);
+        const chosenInGroup = picks.filter(p => list.includes(p)).length;
+        const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (on ? " on" : ""); b.textContent = name;
+        b.disabled = !on && chosenInGroup >= cap;
+        b.onclick = () => {
+          const i = picks.indexOf(name);
+          if (i >= 0) picks.splice(i, 1); else picks.push(name);
+          Q.ans[q.id] = picks.join(",");
+          renderQuiz();
+        };
+        wrap.appendChild(b);
+      });
+    };
+    group("Pick 2 wingers", q.wing, 2);
+    group("Pick 2 midfielders", q.mid, 2);
+    $("qPrev").style.visibility = Q.i > 0 && !Q.editing ? "visible" : "hidden";
+    $("qNext").disabled = picks.length !== 4;
+    $("qNext").textContent = (Q.editing || Q.i === Q.qs.length - 1) ? "Review answers" : "Next";
+    return;
+  }
+  box.className = "opts" + (q.opts.length <= 3 && q.kind !== "count" ? " one" : "");
   q.opts.forEach(o => {
     const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (Q.ans[q.id] === o.id ? " on" : ""); b.textContent = o.label;
     b.onclick = () => { Q.ans[q.id] = o.id; renderQuiz(); clearTimeout(Q.timer); const at = Q.i; Q.timer = setTimeout(() => { if (Q.i === at && current === "sQuiz") advance(); }, 280); };
@@ -919,7 +992,9 @@ function renderQuiz() {
   $("qNext").textContent = (Q.editing || Q.i === Q.qs.length - 1) ? "Review answers" : "Next";
 }
 function advance() {
-  if (!Q.ans[Q.qs[Q.i].id]) return;
+  const q = Q.qs[Q.i];
+  if (q.kind === "impact") { if ((Q.ans[q.id] || "").split(",").filter(Boolean).length !== 4) return; }
+  else if (!Q.ans[q.id]) return;
   if (Q.editing || Q.i >= Q.qs.length - 1) { openReview(); return; }
   Q.i++; renderQuiz();
 }
@@ -933,11 +1008,14 @@ function openReview() {
   Q.editing = false;
   const box = $("rvList"); box.innerHTML = ""; let missing = 0;
   Q.qs.forEach((q, i) => {
-    const o = q.opts.find(x => x.id === Q.ans[q.id]); if (!o) missing++;
-    const r = document.createElement("button"); r.type = "button"; r.className = "rvrow" + (o ? "" : " no");
+    let ok, label;
+    if (q.kind === "impact") { const picks = (Q.ans[q.id] || "").split(",").filter(Boolean); ok = picks.length === 4; label = ok ? picks.join(", ") : "Pick 4"; }
+    else { const o = q.opts.find(x => x.id === Q.ans[q.id]); ok = !!o; label = o ? o.label : "Pick one"; }
+    if (!ok) missing++;
+    const r = document.createElement("button"); r.type = "button"; r.className = "rvrow" + (ok ? "" : " no");
     const l = document.createElement("div"); const t = document.createElement("span"); t.textContent = q.short; const s = document.createElement("small"); s.textContent = q.text;
     l.append(t, s);
-    const b = document.createElement("b"); b.textContent = o ? o.label : "Pick one";
+    const b = document.createElement("b"); b.textContent = label;
     r.append(l, b);
     r.onclick = () => { Q.i = i; Q.editing = true; renderQuiz(); go("sQuiz"); };
     box.appendChild(r);
@@ -965,7 +1043,7 @@ $("lockBtn").onclick = async () => {
    ===================================================================== */
 const ROW_H = 58, GAP = 8, MAX_ROWS = 30;
 const rowEls = {}, prevRank = {};
-const ICON = { correct: "✓", match: "●", wrong: "✗", pending: "…" };
+const ICON = { 10: "✓", 5: "●", 0: "✗" };
 
 function renderChips() {
   const box = $("bChips"); box.innerHTML = "";
@@ -1022,10 +1100,13 @@ function renderBoard({ preds, live }, m, qs) {
     $("meRank").textContent = "#" + (meIdx + 1); $("mePct").textContent = me.pct == null ? "--" : me.pct + "%";
     const list = $("mineList"); list.innerHTML = "";
     qs.forEach(q => {
-      const o = q.opts.find(x => x.id === me.p.answers[q.id]), s = me.r.st[q.id];
+      const ansRaw = me.p.answers[q.id], pts = me.r.st[q.id];
+      let label = "-";
+      if (q.kind === "impact") label = (ansRaw || "").split(",").filter(Boolean).join(", ") || "-";
+      else { const o = q.opts.find(x => x.id === ansRaw); label = o ? o.label : "-"; }
       const row = document.createElement("div"); row.className = "arow";
-      const ic = document.createElement("span"); ic.className = "ic " + s; ic.textContent = ICON[s];
-      const qq = document.createElement("div"); qq.className = "qq"; qq.append(q.short); const sm = document.createElement("small"); sm.textContent = o ? o.label : "-"; qq.appendChild(sm);
+      const ic = document.createElement("span"); ic.className = "ic p" + pts; ic.textContent = ICON[pts];
+      const qq = document.createElement("div"); qq.className = "qq"; qq.append(q.short + " (" + pts + "%)"); const sm = document.createElement("small"); sm.textContent = label; qq.appendChild(sm);
       row.append(ic, qq); list.appendChild(row);
     });
   }
@@ -1047,7 +1128,7 @@ function renderBoard({ preds, live }, m, qs) {
     el.classList.toggle("me", r.key === meKey);
     el.classList.remove("r1", "r2", "r3"); if (i < 3) el.classList.add("r" + (i + 1));
     el.querySelector(".rk").textContent = i + 1;
-    el.querySelector(".nm b").textContent = "@" + r.p.name + (live && live.status === "FT" && i === 0 && r.pct > 0 ? "  🏆" : "");
+    el.querySelector(".nm b").textContent = "@" + r.p.name + (live && live.status === "FT" && i === 0 && r.pct > 0 ? "  🏆" : (r.pct === 100 ? "  🔥" : ""));
     el.querySelector(".nm small").textContent = live ? r.r.ok + " on track · " + r.r.bad + " wrong" : "Answers locked";
     el.querySelector(".pc").textContent = r.pct == null ? "--" : r.pct + "%";
     el.querySelector(".bar").style.width = (r.pct || 0) + "%";
