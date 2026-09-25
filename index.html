@@ -513,28 +513,23 @@ const setFlag = (el, code) => { el.innerHTML = flagSVG(code); };
 const COUNT3 = [{ id: "0", label: "0" }, { id: "1", label: "1" }, { id: "2", label: "2" }, { id: "3+", label: "3 or more" }];
 function buildQuestions(m) {
   const H = m.home, A = m.away, qs = [];
-  qs.push({ id: "winner", kind: "winner", short: "Winner", tag: "MATCH", text: "Who will win?", opts: [{ id: "H", label: H.name }, { id: "D", label: "Draw" }, { id: "A", label: A.name }] });
-  qs.push({ id: "total", kind: "total", short: "Total goals", tag: "MATCH", text: "How many goals in the whole match?", opts: [{ id: "0-1", label: "0 to 1", lo: 0, hi: 1 }, { id: "2-3", label: "2 to 3", lo: 2, hi: 3 }, { id: "4-5", label: "4 to 5", lo: 4, hi: 5 }, { id: "6+", label: "6 or more", lo: 6, hi: 99 }] });
-  qs.push({ id: "first", kind: "first", short: "First goal", tag: "MATCH", text: "Which team scores first?", opts: [{ id: "H", label: H.name }, { id: "A", label: A.name }, { id: "N", label: "No goals" }] });
-  qs.push({ id: "hg", kind: "count", side: "H", short: H.name + " goals", tag: H.name.toUpperCase(), text: "How many goals will " + H.name + " score?", opts: COUNT3 });
-  qs.push({ id: "ag", kind: "count", side: "A", short: A.name + " goals", tag: A.name.toUpperCase(), text: "How many goals will " + A.name + " score?", opts: COUNT3 });
-  qs.push({ id: "btts", kind: "btts", short: "Both score?", tag: "MATCH", text: "Will both teams score?", opts: [{ id: "Y", label: "Yes, both score" }, { id: "N", label: "No" }] });
-  qs.push({ id: "margin", kind: "margin", short: "Winning margin", tag: "MATCH", text: "By how many goals will it be decided?", opts: [{ id: "draw", label: "It's a draw" }, { id: "one", label: "By 1 goal" }, { id: "two", label: "By 2 goals" }, { id: "three", label: "By 3 or more" }] });
-  qs.push({ id: "parity", kind: "parity", short: "Odd or even", tag: "MATCH", text: "Total goals: odd or even?", opts: [{ id: "odd", label: "Odd (1, 3, 5...)" }, { id: "even", label: "Even (0, 2, 4...)" }] });
-  qs.push({ id: "early", kind: "early", short: "Early goal", tag: "MATCH", text: "Will there be a goal in the first 15 minutes?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
-  const wing = H.wing.concat(A.wing), mid = H.mid.concat(A.mid);
-  if (wing.length >= 2 && mid.length >= 2) {
-    qs.push({ id: "impact", kind: "impact", short: "Who makes an impact", tag: "PLAYERS", wing: wing, mid: mid,
-      text: "Pick 2 wingers and 2 midfielders you think will score today." });
-  } else {
-    const stars = H.stars.concat(A.stars);
-    if (stars.length) qs.push({ id: "impact", kind: "scorer", players: stars, short: "Who scores", tag: "PLAYERS", text: "Who will score a goal?",
-      opts: stars.map(n => ({ id: n, label: n })).concat([{ id: "other", label: "Someone else" }, { id: "none", label: "Nobody scores" }]) });
-    else qs.push({ id: "impact", kind: "late", short: "Late goal", tag: "MATCH", text: "Will there be a goal after the 75th minute?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
-  }
+  qs.push({ id: "winner", kind: "winner", short: "Winner", tag: "MATCH", pts: 10, text: "Who will win?", opts: [{ id: "H", label: H.name }, { id: "D", label: "Draw" }, { id: "A", label: A.name }] });
+  qs.push({ id: "total", kind: "total", short: "Total goals", tag: "MATCH", pts: 10, text: "How many goals in the whole match?", opts: [{ id: "0-1", label: "0 to 1", lo: 0, hi: 1 }, { id: "2-3", label: "2 to 3", lo: 2, hi: 3 }, { id: "4-5", label: "4 to 5", lo: 4, hi: 5 }, { id: "6+", label: "6 or more", lo: 6, hi: 99 }] });
+  qs.push({ id: "first", kind: "first", short: "First goal", tag: "MATCH", pts: 10, text: "Which team scores first?", opts: [{ id: "H", label: H.name }, { id: "A", label: A.name }, { id: "N", label: "No goals" }] });
+  qs.push({ id: "hg", kind: "count", side: "H", short: H.name + " goals", tag: H.name.toUpperCase(), pts: 10, text: "How many goals will " + H.name + " score?", opts: COUNT3 });
+  qs.push({ id: "ag", kind: "count", side: "A", short: A.name + " goals", tag: A.name.toUpperCase(), pts: 10, text: "How many goals will " + A.name + " score?", opts: COUNT3 });
+  qs.push({ id: "btts", kind: "btts", short: "Both score?", tag: "MATCH", pts: 10, text: "Will both teams score?", opts: [{ id: "Y", label: "Yes, both score" }, { id: "N", label: "No" }] });
+  qs.push({ id: "margin", kind: "margin", short: "Winning margin", tag: "MATCH", pts: 10, text: "By how many goals will it be decided?", opts: [{ id: "draw", label: "It's a draw" }, { id: "one", label: "By 1 goal" }, { id: "two", label: "By 2 goals" }, { id: "three", label: "By 3 or more" }] });
+  qs.push({ id: "parity", kind: "parity", short: "Odd or even", tag: "MATCH", pts: 10, text: "Total goals: odd or even?", opts: [{ id: "odd", label: "Odd (1, 3, 5...)" }, { id: "even", label: "Even (0, 2, 4...)" }] });
+  qs.push({ id: "early", kind: "window", lo: 0, hi: 15, short: "First 15 min", tag: "MATCH", pts: 4, text: "Will there be a goal in the first 15 minutes?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  qs.push({ id: "half1", kind: "window", lo: 0, hi: 45, short: "First half", tag: "MATCH", pts: 3, text: "Will there be a goal in the first half (before 45')?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  qs.push({ id: "half2", kind: "window", lo: 46, hi: 999, short: "Second half", tag: "MATCH", pts: 3, text: "Will there be a goal in the second half (after 45')?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  const stars = H.stars.concat(A.stars);
+  if (stars.length) qs.push({ id: "scorer", kind: "scorer", players: stars, short: "Who scores", tag: "PLAYERS", pts: 10, text: "Who will score a goal?",
+    opts: stars.map(n => ({ id: n, label: n })).concat([{ id: "other", label: "Someone else" }, { id: "none", label: "Nobody scores" }]) });
+  else qs.push({ id: "scorer", kind: "window", lo: 76, hi: 999, short: "Late goal", tag: "MATCH", pts: 10, text: "Will there be a goal after the 75th minute?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
   return qs;
-}
-/* =====================================================================
+}/* =====================================================================
    SCORING
    live = { status:"LIVE"|"FT", minute, h, a, events:[{min, team:"H"|"A", player}] }
    Every question is worth points. Percent = points on track / total points.
@@ -577,45 +572,36 @@ function isTrueAt(q, ans, h, a) {
   }
   return false;
 }
-/* Every question is out of 10%. Three results only:
-     10%  it is true right now (or was true and can never be undone)
-      5%  it WAS true at some point, but is not true any more
-      0%  it has never been true
+/* Every question pays out as a fraction of its own weight (q.pts). Three results only:
+     1.0   it is true right now (or was true and can never be undone)
+     0.5   it WAS true at some point, but is not true any more
+     0.0   it has never been true
    This means a lucky early guess (like "draw" at 0-0) only pays off
    if the match actually finishes that way. */
-function tieredScore(q, ans, live) {
+function tieredFraction(q, ans, live) {
   if (["winner", "total", "count", "btts", "margin", "parity"].includes(q.kind)) {
     const pts = scoreTimeline(live);
     let sawTrue = false, currentlyTrue = false;
     pts.forEach((pt, i) => { const t = isTrueAt(q, ans, pt.h, pt.a); if (t) sawTrue = true; if (i === pts.length - 1) currentlyTrue = t; });
-    return currentlyTrue ? 10 : (sawTrue ? 5 : 0);
+    return currentlyTrue ? 1 : (sawTrue ? 0.5 : 0);
   }
   if (q.kind === "first") {
     const list = evs(live).filter(e => e.team === "H" || e.team === "A").sort((x, y) => (x.min == null ? 999 : x.min) - (y.min == null ? 999 : y.min));
-    if (!list.length) return ans === "N" ? 10 : 0;             // no goal yet: "no goals" is true so far
-    if (ans === "N") return 5;                                  // it WAS true (no goals) before this goal, now it's not
-    return ans === list[0].team ? 10 : 0;                       // first scorer is decided the moment it happens
+    if (!list.length) return ans === "N" ? 1 : 0;               // no goal yet: "no goals" is true so far
+    if (ans === "N") return 0.5;                                 // it WAS true (no goals) before this goal, now it's not
+    return ans === list[0].team ? 1 : 0;                         // first scorer is decided the moment it happens
   }
-  if (q.kind === "early" || q.kind === "late") {
-    const bound = q.kind === "early" ? 15 : 75;
-    const test = e => e.min != null && (q.kind === "early" ? e.min <= bound : e.min >= bound);
+  if (q.kind === "window") {                                     // a goal between minute q.lo and q.hi
+    const test = e => e.min != null && e.min >= q.lo && e.min <= q.hi;
     const happened = evs(live).some(test);
-    if (happened) return ans === "Y" ? 10 : 5;                  // "N" was true until this goal broke it
-    const windowOver = live.status === "FT" || (q.kind === "early" && live.minute && live.minute > bound);
-    if (windowOver) return ans === "N" ? 10 : 0;
-    return ans === "N" ? 10 : 0;                                // still open, nothing has happened yet
+    if (happened) return ans === "Y" ? 1 : 0.5;                  // "N" was true until this goal broke it
+    return ans === "N" ? 1 : 0;                                  // window still open or closed with nothing: "N" holds
   }
   if (q.kind === "scorer") {
     const names = scorerNames(live), other = names.filter(n => !q.players.some(p => nameMatch(n, p))).length;
-    if (ans === "none") return names.length ? 0 : 10;
-    if (ans === "other") return other ? 10 : 0;
-    return names.some(n => nameMatch(n, ans)) ? 10 : 0;
-  }
-  if (q.kind === "impact") {
-    const picks = (ans || "").split(",").filter(Boolean);
-    const names = scorerNames(live);
-    const hits = picks.filter(p => names.some(n => nameMatch(n, p))).length;
-    return hits >= 2 ? 10 : (hits === 1 ? 5 : 0);
+    if (ans === "none") return names.length ? 0 : 1;
+    if (ans === "other") return other ? 1 : 0;
+    return names.some(n => nameMatch(n, ans)) ? 1 : 0;
   }
   return 0;
 }
@@ -623,13 +609,13 @@ function evalPred(pred, live, qs) {
   const st = {}; let earned = 0, ok = 0, bad = 0;
   qs.forEach(q => {
     const ans = pred.answers[q.id];
-    const pts = (ans && live) ? tieredScore(q, ans, live) : 0;
+    const frac = (ans && live) ? tieredFraction(q, ans, live) : 0;
+    const pts = frac * q.pts;
     st[q.id] = pts; earned += pts;
-    if (pts >= 10) ok++; else if (pts === 0 && ans) bad++;
+    if (frac >= 1) ok++; else if (frac === 0 && ans) bad++;
   });
   return { pct: live ? Math.round(earned) : null, st, ok, bad };
-}
-/* =====================================================================
+}/* =====================================================================
    DATA LAYER
    Api   = your Cloudflare Worker (shared board for everyone)
    Local = this device only (when API_BASE is empty)
@@ -658,12 +644,7 @@ function makeBots() {
   const qs = buildQuestions(DEMO_MATCH);
   return BOT_NAMES.map((name, i) => {
     const r = mulberry(i * 7919 + 13), answers = {};
-    qs.forEach(q => {
-      if (q.kind === "impact") {
-        const w = q.wing.slice().sort(() => r() - 0.5).slice(0, 2), m = q.mid.slice().sort(() => r() - 0.5).slice(0, 2);
-        answers[q.id] = w.concat(m).join(",");
-      } else answers[q.id] = (q.id === "winner" && r() < 0.7) ? "H" : q.opts[Math.floor(r() * q.opts.length)].id;
-    });
+    qs.forEach(q => { answers[q.id] = (q.id === "winner" && r() < 0.7) ? "H" : q.opts[Math.floor(r() * q.opts.length)].id; });
     return { matchId: "demo", name, team: "H", answers, pen: 3, ts: i + 1 };
   });
 }
@@ -954,33 +935,6 @@ function renderQuiz() {
   $("qFill").style.width = ((Q.i + 1) / Q.qs.length * 100) + "%";
   $("qTag").textContent = q.tag; $("qText").textContent = q.text;
   const box = $("qOpts"); box.innerHTML = "";
-  if (q.kind === "impact") {
-    box.className = "opts one";
-    const picks = (Q.ans[q.id] || "").split(",").filter(Boolean);
-    const group = (label, list, cap) => {
-      const h = document.createElement("div"); h.className = "qtag"; h.style.marginTop = "10px"; h.textContent = label; box.appendChild(h);
-      const wrap = document.createElement("div"); wrap.className = "opts one"; box.appendChild(wrap);
-      list.forEach(name => {
-        const on = picks.includes(name);
-        const chosenInGroup = picks.filter(p => list.includes(p)).length;
-        const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (on ? " on" : ""); b.textContent = name;
-        b.disabled = !on && chosenInGroup >= cap;
-        b.onclick = () => {
-          const i = picks.indexOf(name);
-          if (i >= 0) picks.splice(i, 1); else picks.push(name);
-          Q.ans[q.id] = picks.join(",");
-          renderQuiz();
-        };
-        wrap.appendChild(b);
-      });
-    };
-    group("Pick 2 wingers", q.wing, 2);
-    group("Pick 2 midfielders", q.mid, 2);
-    $("qPrev").style.visibility = Q.i > 0 && !Q.editing ? "visible" : "hidden";
-    $("qNext").disabled = picks.length !== 4;
-    $("qNext").textContent = (Q.editing || Q.i === Q.qs.length - 1) ? "Review answers" : "Next";
-    return;
-  }
   box.className = "opts" + (q.opts.length <= 3 && q.kind !== "count" ? " one" : "");
   q.opts.forEach(o => {
     const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (Q.ans[q.id] === o.id ? " on" : ""); b.textContent = o.label;
@@ -992,9 +946,7 @@ function renderQuiz() {
   $("qNext").textContent = (Q.editing || Q.i === Q.qs.length - 1) ? "Review answers" : "Next";
 }
 function advance() {
-  const q = Q.qs[Q.i];
-  if (q.kind === "impact") { if ((Q.ans[q.id] || "").split(",").filter(Boolean).length !== 4) return; }
-  else if (!Q.ans[q.id]) return;
+  if (!Q.ans[Q.qs[Q.i].id]) return;
   if (Q.editing || Q.i >= Q.qs.length - 1) { openReview(); return; }
   Q.i++; renderQuiz();
 }
@@ -1008,9 +960,7 @@ function openReview() {
   Q.editing = false;
   const box = $("rvList"); box.innerHTML = ""; let missing = 0;
   Q.qs.forEach((q, i) => {
-    let ok, label;
-    if (q.kind === "impact") { const picks = (Q.ans[q.id] || "").split(",").filter(Boolean); ok = picks.length === 4; label = ok ? picks.join(", ") : "Pick 4"; }
-    else { const o = q.opts.find(x => x.id === Q.ans[q.id]); ok = !!o; label = o ? o.label : "Pick one"; }
+    const o = q.opts.find(x => x.id === Q.ans[q.id]), ok = !!o, label = o ? o.label : "Pick one";
     if (!ok) missing++;
     const r = document.createElement("button"); r.type = "button"; r.className = "rvrow" + (ok ? "" : " no");
     const l = document.createElement("div"); const t = document.createElement("span"); t.textContent = q.short; const s = document.createElement("small"); s.textContent = q.text;
@@ -1043,7 +993,6 @@ $("lockBtn").onclick = async () => {
    ===================================================================== */
 const ROW_H = 58, GAP = 8, MAX_ROWS = 30;
 const rowEls = {}, prevRank = {};
-const ICON = { 10: "✓", 5: "●", 0: "✗" };
 
 function renderChips() {
   const box = $("bChips"); box.innerHTML = "";
@@ -1101,12 +1050,11 @@ function renderBoard({ preds, live }, m, qs) {
     const list = $("mineList"); list.innerHTML = "";
     qs.forEach(q => {
       const ansRaw = me.p.answers[q.id], pts = me.r.st[q.id];
-      let label = "-";
-      if (q.kind === "impact") label = (ansRaw || "").split(",").filter(Boolean).join(", ") || "-";
-      else { const o = q.opts.find(x => x.id === ansRaw); label = o ? o.label : "-"; }
+      const o = q.opts.find(x => x.id === ansRaw), label = o ? o.label : "-";
+      const tier = pts >= q.pts ? "p10" : (pts > 0 ? "p5" : "p0"), icon = pts >= q.pts ? "✓" : (pts > 0 ? "●" : "✗");
       const row = document.createElement("div"); row.className = "arow";
-      const ic = document.createElement("span"); ic.className = "ic p" + pts; ic.textContent = ICON[pts];
-      const qq = document.createElement("div"); qq.className = "qq"; qq.append(q.short + " (" + pts + "%)"); const sm = document.createElement("small"); sm.textContent = label; qq.appendChild(sm);
+      const ic = document.createElement("span"); ic.className = "ic " + tier; ic.textContent = icon;
+      const qq = document.createElement("div"); qq.className = "qq"; qq.append(q.short + " (" + Math.round(pts * 10) / 10 + " of " + q.pts + "%)"); const sm = document.createElement("small"); sm.textContent = label; qq.appendChild(sm);
       row.append(ic, qq); list.appendChild(row);
     });
   }
