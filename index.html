@@ -63,7 +63,7 @@
   .mrow .mt b { display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .mrow .mt small { display:block; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .pill { font-size:10px; font-weight:800; letter-spacing:.1em; padding:4px 8px; border-radius:999px; background:#ffffff14; color:var(--muted); flex:none; }
-  .pill.live { background:#ff3b5c22; color:#ff7b93; } .pill.done { background:#35e08a22; color:var(--good); } .pill.demo { background:#ffd25a22; color:var(--gold); }
+  .pill.live { background:#ff3b5c22; color:#ff7b93; } .pill.done { background:#35e08a22; color:var(--good); } .pill.demo { background:#ffd25a22; color:var(--gold); } .pill.soon { background:#7a5cff22; color:#b3a4ff; }
 
   .match { border-radius:24px; padding:22px 16px 18px; backdrop-filter:blur(8px); box-shadow:0 20px 50px rgba(0,0,0,.35); }
   .tag { display:inline-block; font-size:11px; font-weight:800; letter-spacing:.14em; padding:5px 10px; border-radius:999px; background:#ff3b5c22; color:#ff7b93; border:1px solid #ff3b5c55; margin-bottom:16px; }
@@ -263,6 +263,9 @@
       <div class="hint" id="hint">This name shows on the leaderboard.</div>
       <button class="btn pulse" type="button" id="playBtn">LET'S PLAY</button>
     </div>
+    <div class="nameform" id="lockedForm" style="display:none; text-align:center">
+      <div class="hint" id="lockedHint" style="font-size:14px">Predictions open at --</div>
+    </div>
     <button class="link" id="demoBtn">Watch a 60-second demo match</button>
 
     <section class="steps">
@@ -457,6 +460,11 @@ const pad = n => String(n).padStart(2, "0");
 const fmtDate = ms => new Date(ms).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 const OVER_MS = 2.6 * 3600e3 + 24 * 3600e3;   // match length + 24 hours, then it disappears
+const OPEN_BEFORE_MS = 3.25 * 3600e3;         // predictions open 3h15m before kickoff (e.g. 9:00 PM the night before a 12:15 AM match)
+const isOpenNow = m => DEMO || m.id === "demo" || Date.now() >= m.ko - OPEN_BEFORE_MS;
+const openTime = m => new Date(m.ko - OPEN_BEFORE_MS);
+const fmtOpenShort = m => openTime(m).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const fmtOpenLong = m => openTime(m).toLocaleString([], { weekday: "short", hour: "2-digit", minute: "2-digit" });
 const matchList = () => {
   if (DEMO) return [DEMO_MATCH];
   const vis = MATCHES.filter(m => Date.now() < m.ko + OVER_MS);
@@ -467,6 +475,7 @@ const isLocked = m => !DEMO && Date.now() >= m.ko;
 function stateOf(m) {
   if (m.id === "demo") return ["DEMO", "demo"];
   const now = Date.now();
+  if (now < m.ko - OPEN_BEFORE_MS) return ["OPENS " + fmtOpenShort(m), "soon"];
   if (now < m.ko) return ["UPCOMING", ""];
   if (now < m.ko + 2.6 * 3600e3) return ["LIVE", "live"];
   return ["FINISHED", "done"];
@@ -800,16 +809,26 @@ function tick() {
   tag.className = "tag";
   if (DEMO) {
     tag.textContent = "DEMO MODE"; tag.classList.add("demo"); note.textContent = "Demo: the match is fake and runs for 60 seconds.";
-    ["d", "h", "m", "s"].forEach(i => $(i).textContent = "00"); return;
+    ["d", "h", "m", "s"].forEach(i => $(i).textContent = "00");
+    $("nameForm").style.display = ""; $("lockedForm").style.display = "none";
+    return;
   }
   const diff = m.ko - Date.now();
   if (diff <= 0) {
     ["d", "h", "m", "s"].forEach(i => $(i).textContent = "00");
     const [label] = stateOf(m); tag.textContent = label === "LIVE" ? "LIVE / STARTED" : "FINISHED"; tag.classList.add("live");
     note.textContent = "Predictions are closed. Watch the live board.";
+    $("nameForm").style.display = ""; $("lockedForm").style.display = "none";
     return;
   }
-  tag.textContent = "UPCOMING MATCH"; note.textContent = "Predictions lock at kickoff.";
+  if (!isOpenNow(m)) {
+    tag.textContent = "OPENS SOON"; tag.classList.add("demo"); note.textContent = "Predictions open " + fmtOpenLong(m) + ".";
+    $("nameForm").style.display = "none"; $("lockedForm").style.display = "block";
+    $("lockedHint").textContent = "🔒 Predictions open " + fmtOpenLong(m) + ". Come back then!";
+  } else {
+    tag.textContent = "UPCOMING MATCH"; note.textContent = "Predictions lock at kickoff.";
+    $("nameForm").style.display = ""; $("lockedForm").style.display = "none";
+  }
   $("d").textContent = pad(Math.floor(diff / 86400000)); $("h").textContent = pad(Math.floor(diff / 3600000) % 24);
   $("m").textContent = pad(Math.floor(diff / 60000) % 60); $("s").textContent = pad(Math.floor(diff / 1000) % 60);
 }
@@ -834,6 +853,8 @@ async function submitName() {
     return;
   }
   S.name = name; Store.set("nl_name", name);
+  const mChk = curMatch();
+  if (!isOpenNow(mChk)) { toast("Predictions for this match open " + fmtOpenLong(mChk) + "."); return; }
   const btn = $("playBtn"); btn.disabled = true; btn.textContent = "CHECKING...";
   try {
     await dbReady;
