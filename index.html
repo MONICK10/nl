@@ -679,11 +679,25 @@ function tieredFraction(q, ans, live) {
   }
   return 0;
 }
+/* TONIGHT'S MANUAL FIX — the live feed never recorded an assist for Anthony
+   Gordon's 36th-minute goal (ESPN's own data only ever listed the scorer),
+   but a live match report confirmed Jude Bellingham set it up. So anyone who
+   picked him for England's midfielder-assist question gets the full 10%.
+   Format: matchId -> { questionId -> [names that should get full credit] } */
+const MANUAL_CREDIT = {
+  "ENG_ESP": { "midH": ["Jude Bellingham"] }
+};
 function evalPred(pred, live, qs) {
   const st = {}; let earned = 0, ok = 0, bad = 0;
+  const credit = MANUAL_CREDIT[pred.matchId] || {};
   qs.forEach(q => {
     const ans = pred.answers[q.id];
-    const frac = (ans && live) ? tieredFraction(q, ans, live) : 0;
+    let frac = (ans && live) ? tieredFraction(q, ans, live) : 0;
+    const names = credit[q.id];
+    if (names && ans) {
+      const picks = String(ans).split("|");
+      if (names.some(n => picks.some(p => p === n || nameMatch(p, n) || nameMatch(n, p)))) frac = 1;
+    }
     const pts = frac * q.pts;
     st[q.id] = pts; earned += pts;
     if (frac >= 1) ok++; else if (frac === 0 && ans) bad++;
