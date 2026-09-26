@@ -393,23 +393,25 @@ const CONFIG = {
    TEAMS  (add star player names to a team and it gets a "Who will score?" question)
    CHECK the names before you post: injuries and call-ups change.
    ===================================================================== */
+/* atk = attackers/forwards + wingers combined into one pool. mid = midfielders. Verified against
+   each team's actual squad named for these September/October 2026 Nations League matches. */
 const TEAMS = {
-  POR: { name: "Portugal",    stars: ["Ronaldo", "Bruno Fernandes"], wing: ["Rafael Le\u00e3o", "Pedro Neto"], mid: ["Bruno Fernandes", "Vitinha"] },
-  WAL: { name: "Wales",       stars: [], wing: [], mid: [] },
-  NOR: { name: "Norway",      stars: ["Erling Haaland", "Martin \u00d8degaard"], wing: [], mid: [] },
-  DEN: { name: "Denmark",     stars: [], wing: [], mid: [] },
-  ITA: { name: "Italy",       stars: [], wing: ["Federico Chiesa", "Nicol\u00f2 Zaniolo"], mid: ["Nicol\u00f2 Barella", "Sandro Tonali"] },
-  BEL: { name: "Belgium",     stars: ["Kevin De Bruyne"], wing: ["J\u00e9r\u00e9my Doku", "Leandro Trossard"], mid: ["Kevin De Bruyne", "Youri Tielemans"] },
-  TUR: { name: "T\u00fcrkiye", stars: [], wing: [], mid: [] },
-  FRA: { name: "France",      stars: ["Kylian Mbapp\u00e9", "Ousmane Demb\u00e9l\u00e9"], wing: ["Ousmane Demb\u00e9l\u00e9", "Kylian Mbapp\u00e9"], mid: ["Aur\u00e9lien Tchouam\u00e9ni", "Adrien Rabiot"] },
-  CZE: { name: "Czechia",     stars: [], wing: [], mid: [] },
-  CRO: { name: "Croatia",     stars: [], wing: [], mid: [] },
-  ENG: { name: "England",     stars: ["Harry Kane", "Jude Bellingham"], wing: ["Bukayo Saka", "Phil Foden"], mid: ["Jude Bellingham", "Declan Rice"] },
-  ESP: { name: "Spain",       stars: ["Lamine Yamal", "Pedri"], wing: ["Lamine Yamal", "Nico Williams"], mid: ["Pedri", "Fabi\u00e1n Ruiz"] },
-  NED: { name: "Netherlands", stars: ["Cody Gakpo", "Xavi Simons"], wing: ["Cody Gakpo", "Steven Bergwijn"], mid: ["Xavi Simons", "Frenkie de Jong"] },
-  GER: { name: "Germany",     stars: ["Florian Wirtz", "Jamal Musiala"], wing: ["Jamal Musiala", "Leroy San\u00e9"], mid: ["Florian Wirtz", "Joshua Kimmich"] },
-  SRB: { name: "Serbia",      stars: [], wing: [], mid: [] },
-  GRE: { name: "Greece",      stars: [], wing: [], mid: [] }
+  POR: { name: "Portugal",    atk: ["Cristiano Ronaldo", "Rafael Le\u00e3o", "Gon\u00e7alo Ramos", "Pedro Neto", "Francisco Concei\u00e7\u00e3o", "Jo\u00e3o F\u00e9lix"], mid: ["Bruno Fernandes", "Vitinha", "Jo\u00e3o Neves", "Bernardo Silva", "Jo\u00e3o Palhinha", "Ruben Neves"] },
+  WAL: { name: "Wales",       atk: ["Brennan Johnson", "Kieffer Moore", "Liam Cullen", "Mark Harris", "Wes Burns", "Sorba Thomas"], mid: ["David Brooks", "Lewis Koumas", "Jordan James", "Dan James", "Josh Sheehan", "Ethan Ampadu"] },
+  NOR: { name: "Norway",      atk: ["Erling Haaland", "Oscar Bobb", "Antonio Nusa", "Alexander S\u00f8rloth", "Erik Botheim", "J\u00f8rgen Strand Larsen"], mid: ["Martin \u00d8degaard", "Sander Berge", "Fredrik Aursnes", "Thelo Aasgaard", "Patrick Berg", "Kristian Thorstvedt"] },
+  DEN: { name: "Denmark",     atk: ["Rasmus H\u00f8jlund", "Mikkel Damsgaard", "Kasper Dolberg", "Adam Daghim", "Kasper Hogh", "Gustav Isaksen"], mid: ["Morten Hjulmand", "Pierre-Emile H\u00f8jbjerg", "Victor Froholdt", "Mads Bidstrup", "Thomas J\u00f8rgensen", "Albert Gr\u00f8nb\u00e6k"] },
+  ITA: { name: "Italy",       atk: ["Moise Kean", "Francesco Pio Esposito", "Niccol\u00f2 Cambiaghi", "Giacomo Raspadori", "Gianluca Scamacca", "Daniel Maldini"], mid: ["Nicol\u00f2 Barella", "Sandro Tonali", "Davide Frattesi", "Alessandro Romano", "Rolando Mandragora", "Issa Doumbia"] },
+  BEL: { name: "Belgium",     atk: ["Kevin De Bruyne", "Mika Godts", "Romelu Lukaku", "Lo\u00efs Openda", "Mat\u00edas Fern\u00e1ndez-Pardo", "Thibaut Moreira"], mid: ["Nicolas Raskin", "Youri Tielemans", "Charles De Ketelaere", "Hans Vanaken", "Romeo Lavia", "Mandela Keita"] },
+  TUR: { name: "T\u00fcrkiye", atk: ["Arda G\u00fcler", "Bar\u0131\u015f Alper Y\u0131lmaz", "Kerem Akt\u00fcrko\u011flu", "Kenan Y\u0131ld\u0131z", "Can Uzun", "Yunus Akg\u00fcn"], mid: ["Orkun K\u00f6k\u00e7\u00fc", "\u0130smail Y\u00fcksek", "Salih \u00d6zcan", "Hakan \u00c7alhano\u011flu", "Melih Kabasakal", "Bartu\u011f Elmaz"] },
+  FRA: { name: "France",      atk: ["Kylian Mbapp\u00e9", "Ousmane Demb\u00e9l\u00e9", "Michael Olise", "Bradley Barcola", "D\u00e9sir\u00e9 Dou\u00e9", "Esteban Lepaul"], mid: ["Eduardo Camavinga", "Adrien Rabiot", "Rayan Cherki", "Manu Kon\u00e9", "Andy Diouf", "Maghnes Akliouche"] },
+  CZE: { name: "Czechia",     atk: ["Patrik Schick", "Adam Hlo\u017eek", "Tom\u00e1\u0161 Chor\u00fd", "Mojm\u00edr Chytil", "Jan Kuchta", "Christophe Kabongo"], mid: ["Tom\u00e1\u0161 Sou\u010dek", "Luk\u00e1\u0161 Provod", "Michal Sad\u00edlek", "Pavel \u0160ulc", "Luk\u00e1\u0161 \u010cerv", "Pavel Bucha"] },
+  CRO: { name: "Croatia",     atk: ["Ivan Peri\u0161i\u0107", "Andrej Kramari\u0107", "Petar Musa", "Ante Budimir", "Franjo Ivanovi\u0107", "Marco Pa\u0161ali\u0107"], mid: ["Luka Modri\u0107", "Mateo Kova\u010di\u0107", "Martin Baturina", "Mario Pa\u0161ali\u0107", "Nikola Vla\u0161i\u0107", "Petar Su\u010di\u0107"] },
+  ENG: { name: "England",     atk: ["Harry Kane", "Bukayo Saka", "Anthony Gordon", "Marcus Rashford", "Dominic Calvert-Lewin", "Rio Ngumoha"], mid: ["Jude Bellingham", "Declan Rice", "Cole Palmer", "Kobbie Mainoo", "Eberechi Eze", "Morgan Rogers"] },
+  ESP: { name: "Spain",       atk: ["Lamine Yamal", "Nico Williams", "Ferran Torres", "\u00c1lvaro Morata", "Mikel Oyarzabal", "Yeremy Pino"], mid: ["Pedri", "Fabi\u00e1n Ruiz", "Rodri", "Mart\u00edn Zubimendi", "Mikel Merino", "Marcos Llorente"] },
+  NED: { name: "Netherlands", atk: ["Cody Gakpo", "Crysencio Summerville", "Brian Brobbey", "Donyell Malen", "Noa Lang", "Ruben van Bommel"], mid: ["Ryan Gravenberch", "Tijjani Reijnders", "Teun Koopmeiners", "Joey Veerman", "Quinten Timber", "Kenneth Taylor"] },
+  GER: { name: "Germany",     atk: ["Kai Havertz", "Serge Gnabry", "Karim Adeyemi", "Jonathan Burkardt", "Nick Woltemade", "Kevin Schade"], mid: ["Jamal Musiala", "Florian Wirtz", "Aleksandar Pavlovi\u0107", "Joshua Kimmich", "Felix Nmecha", "Chris F\u00fchrich"] },
+  SRB: { name: "Serbia",      atk: ["Du\u0161an Vlahovi\u0107", "Aleksandar Mitrovi\u0107", "Du\u0161an Tadi\u0107", "Luka Jovi\u0107", "Aleksandar Pe\u0161i\u0107", "Nikola Jovi\u0107"], mid: ["Sergej Milinkovi\u0107-Savi\u0107", "Filip Kosti\u0107", "Sa\u0161a Luki\u0107", "Nemanja Gudelj", "Marko Gruji\u0107", "Andrija \u017divkovi\u0107"] },
+  GRE: { name: "Greece",      atk: ["Fotis Ioannidis", "Vangelis Pavlidis", "Christos Tzolis", "Tasos Douvikas", "Charalampos Kostoulas", "Giannis Konstantelias"], mid: ["Konstantinos Karetsas", "Christos Mouzakitis", "Anastasios Bakasetas", "Giannis Michailidis", "Petros Mantalos"] }
 };
 
 /* =====================================================================
@@ -438,7 +440,7 @@ const MATCHES_RAW = [
   ["FRA", "BEL", "2026-10-05T20:45:00+02:00", "A1"], ["ITA", "TUR", "2026-10-05T20:45:00+02:00", "A1"],
   ["CRO", "ESP", "2026-10-06T20:45:00+02:00", "A3"], ["ENG", "CZE", "2026-10-06T20:45:00+02:00", "A3"]
 ];
-function mkTeam(code) { const t = TEAMS[code] || { name: code, stars: [], wing: [], mid: [] }; return { code, name: t.name, stars: t.stars, wing: t.wing || [], mid: t.mid || [] }; }
+function mkTeam(code) { const t = TEAMS[code] || { name: code, atk: [], mid: [] }; return { code, name: t.name, atk: t.atk || [], mid: t.mid || [] }; }
 const MATCHES = MATCHES_RAW.map(([h, a, ko, g]) => ({ id: h + "_" + a, home: mkTeam(h), away: mkTeam(a), ko: new Date(ko).getTime(), group: g, venue: "" }))
   .sort((x, y) => x.ko - y.ko);
 const DEMO_MATCH = { id: "demo", home: mkTeam("POR"), away: mkTeam("WAL"), ko: Date.now(), group: "DEMO", venue: "Demo stadium" };
@@ -519,24 +521,38 @@ const setFlag = (el, code) => { el.innerHTML = flagSVG(code); };
 /* =====================================================================
    QUESTIONS  (all multiple choice, 5 to 6 per match)
    ===================================================================== */
-const COUNT3 = [{ id: "0", label: "0" }, { id: "1", label: "1" }, { id: "2", label: "2" }, { id: "3+", label: "3 or more" }];
+const GOAL_WINDOWS = [
+  { id: "w1", label: "0' – 15'", lo: 0, hi: 15 },
+  { id: "w2", label: "25' – 40'", lo: 25, hi: 40 },
+  { id: "w3", label: "50' – 65'", lo: 50, hi: 65 },
+  { id: "other", label: "Some other time" }
+];
+const inNamedWindow = min => GOAL_WINDOWS.slice(0, 3).some(w => min >= w.lo && min <= w.hi);
+function playerQ(team, side, listKey, id, pts, mode) {           // mode: "scorer" or "assist"
+  const list = team[listKey], roleLabel = listKey === "atk" ? "attacker" : "midfielder";
+  const verb = mode === "assist" ? "get an assist" : "score";
+  if (list && list.length >= 2) return {
+    id, kind: mode === "assist" ? "assistTeam" : "scorerTeam", side, players: list, multi: true,
+    short: "Pick 2 " + roleLabel + "s (" + team.name + ")", tag: team.name.toUpperCase(), pts,
+    text: "Pick 2 " + team.name + " " + roleLabel + "s — right if EITHER one will " + verb,
+    opts: list.map(n => ({ id: n, label: n }))
+  };
+  return { id, kind: "windowSide", side, lo: 0, hi: 999, short: team.name + " to score", tag: team.name.toUpperCase(), pts,
+    text: "Will " + team.name + " score at all?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] };
+}
 function buildQuestions(m) {
   const H = m.home, A = m.away, qs = [];
-  qs.push({ id: "winner", kind: "winner", short: "Winner", tag: "MATCH", pts: 10, text: "Who will win?", opts: [{ id: "H", label: H.name }, { id: "D", label: "Draw" }, { id: "A", label: A.name }] });
-  qs.push({ id: "total", kind: "total", short: "Total goals", tag: "MATCH", pts: 10, text: "How many goals in the whole match?", opts: [{ id: "0-1", label: "0 to 1", lo: 0, hi: 1 }, { id: "2-3", label: "2 to 3", lo: 2, hi: 3 }, { id: "4-5", label: "4 to 5", lo: 4, hi: 5 }, { id: "6+", label: "6 or more", lo: 6, hi: 99 }] });
-  qs.push({ id: "first", kind: "first", short: "First goal", tag: "MATCH", pts: 10, text: "Which team scores first?", opts: [{ id: "H", label: H.name }, { id: "A", label: A.name }, { id: "N", label: "No goals" }] });
-  qs.push({ id: "hg", kind: "count", side: "H", short: H.name + " goals", tag: H.name.toUpperCase(), pts: 10, text: "How many goals will " + H.name + " score?", opts: COUNT3 });
-  qs.push({ id: "ag", kind: "count", side: "A", short: A.name + " goals", tag: A.name.toUpperCase(), pts: 10, text: "How many goals will " + A.name + " score?", opts: COUNT3 });
-  qs.push({ id: "btts", kind: "btts", short: "Both score?", tag: "MATCH", pts: 10, text: "Will both teams score?", opts: [{ id: "Y", label: "Yes, both score" }, { id: "N", label: "No" }] });
-  qs.push({ id: "margin", kind: "margin", short: "Winning margin", tag: "MATCH", pts: 10, text: "By how many goals will it be decided?", opts: [{ id: "draw", label: "It's a draw" }, { id: "one", label: "By 1 goal" }, { id: "two", label: "By 2 goals" }, { id: "three", label: "By 3 or more" }] });
+  qs.push({ id: "scoreline", kind: "scoreline", short: "Exact score", tag: "MATCH", pts: 15, teamH: H.name, teamA: A.name,
+    text: "Predict the exact final score", opts: [] });
+  qs.push({ id: "goalwin", kind: "goalWindow", short: "Goal timing", tag: "MATCH", pts: 10, text: "When will there be a goal?", opts: GOAL_WINDOWS });
+  qs.push(playerQ(H, "H", "atk", "atkH", 10, "scorer"));
+  qs.push(playerQ(A, "A", "atk", "atkA", 10, "scorer"));
+  qs.push(playerQ(H, "H", "mid", "midH", 10, "assist"));
+  qs.push(playerQ(A, "A", "mid", "midA", 10, "assist"));
   qs.push({ id: "parity", kind: "parity", short: "Odd or even", tag: "MATCH", pts: 10, text: "Total goals: odd or even?", opts: [{ id: "odd", label: "Odd (1, 3, 5...)" }, { id: "even", label: "Even (0, 2, 4...)" }] });
-  qs.push({ id: "early", kind: "window", lo: 0, hi: 15, short: "First 15 min", tag: "MATCH", pts: 4, text: "Will there be a goal in the first 15 minutes?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
-  qs.push({ id: "half1", kind: "window", lo: 0, hi: 45, short: "First half", tag: "MATCH", pts: 3, text: "Will there be a goal in the first half (before 45')?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
-  qs.push({ id: "half2", kind: "window", lo: 46, hi: 999, short: "Second half", tag: "MATCH", pts: 3, text: "Will there be a goal in the second half (after 45')?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
-  const stars = H.stars.concat(A.stars);
-  if (stars.length) qs.push({ id: "scorer", kind: "scorer", players: stars, short: "Who scores", tag: "PLAYERS", pts: 10, text: "Who will score a goal?",
-    opts: stars.map(n => ({ id: n, label: n })).concat([{ id: "other", label: "Someone else" }, { id: "none", label: "Nobody scores" }]) });
-  else qs.push({ id: "scorer", kind: "window", lo: 76, hi: 999, short: "Late goal", tag: "MATCH", pts: 10, text: "Will there be a goal after the 75th minute?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  qs.push({ id: "halfcmp", kind: "halfCompare", short: "Which half", tag: "MATCH", pts: 10, text: "Which half will have more goals?", opts: [{ id: "first", label: "First half" }, { id: "second", label: "Second half" }, { id: "equal", label: "Equal" }] });
+  qs.push({ id: "streak", kind: "streak", short: "Back-to-back goals", tag: "MATCH", pts: 5, text: "Will one team score twice in a row without reply?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
+  qs.push({ id: "stoppage", kind: "window", lo: 90, hi: 999, short: "Stoppage goal", tag: "MATCH", pts: 10, text: "Will there be a goal after the 90th minute?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
   return qs;
 }/* =====================================================================
    SCORING
@@ -581,6 +597,14 @@ function isTrueAt(q, ans, h, a) {
   }
   return false;
 }
+/* how well an exact-scoreline guess matches: 1.0 exact, 0.6 same goal difference, 0.3 same result (win/draw/loss), else 0 */
+function scorelineFrac(ph, pa, h, a) {
+  if (ph === h && pa === a) return 1;
+  if (ph - pa === h - a) return 0.6;
+  const outcome = d => d > 0 ? "H" : d < 0 ? "A" : "D";
+  if (outcome(ph - pa) === outcome(h - a)) return 0.3;
+  return 0;
+}
 /* Every question pays out as a fraction of its own weight (q.pts). Three results only:
      1.0   it is true right now (or was true and can never be undone)
      0.5   it WAS true at some point, but is not true any more
@@ -611,6 +635,47 @@ function tieredFraction(q, ans, live) {
     if (ans === "none") return names.length ? 0 : 1;
     if (ans === "other") return other ? 1 : 0;
     return names.some(n => nameMatch(n, ans)) ? 1 : 0;
+  }
+  if (q.kind === "scorerTeam") {                                  // pick 2 attackers, right if EITHER scores
+    const names = evs(live).filter(e => e.team === q.side).map(e => e.player);
+    const picks = (ans || "").split("|").filter(Boolean);
+    return picks.some(p => names.some(n => nameMatch(n, p))) ? 1 : 0;
+  }
+  if (q.kind === "assistTeam") {                                  // pick 2 midfielders, right if EITHER gets an assist
+    const names = evs(live).filter(e => e.team === q.side && e.assist).map(e => e.assist);
+    const picks = (ans || "").split("|").filter(Boolean);
+    return picks.some(p => names.some(n => nameMatch(n, p))) ? 1 : 0;
+  }
+  if (q.kind === "windowSide") {                                  // fallback: "will this team score at all" in a minute range
+    const happened = evs(live).some(e => e.team === q.side && e.min != null && e.min >= q.lo && e.min <= q.hi);
+    if (happened) return ans === "Y" ? 1 : 0.5;
+    return ans === "N" ? 1 : 0;
+  }
+  if (q.kind === "scoreline") {                                   // exact final score, three tiers (see scorelineFrac)
+    const [ph, pa] = (ans || "0-0").split("-").map(Number);
+    return scorelineFrac(ph, pa, live.h || 0, live.a || 0);
+  }
+  if (q.kind === "goalWindow") {                                  // which time window the/a goal falls in
+    const goals = evs(live).filter(e => e.team === "H" || e.team === "A" ? e.min != null : false);
+    if (ans === "other") return goals.some(e => !inNamedWindow(e.min)) ? 1 : 0;
+    const o = GOAL_WINDOWS.find(w => w.id === ans);
+    if (goals.some(e => e.min >= o.lo && e.min <= o.hi)) return 1;
+    const near = goals.some(e => Math.abs(e.min - o.lo) <= 5 || Math.abs(e.min - o.hi) <= 5);
+    return near ? 0.5 : 0;                                        // a goal just outside the window: partial credit
+  }
+  if (q.kind === "halfCompare") {                                 // which half has more goals so far
+    const goals = evs(live).filter(e => e.min != null && (e.team === "H" || e.team === "A"));
+    const g1 = goals.filter(e => e.min <= 45).length, g2 = goals.filter(e => e.min > 45).length;
+    const cur = g1 > g2 ? "first" : g1 < g2 ? "second" : "equal";
+    return ans === cur ? 1 : 0;
+  }
+  if (q.kind === "streak") {                                      // one team scores twice with no reply in between
+    const list = evs(live).filter(e => e.team === "H" || e.team === "A")
+      .sort((x, y) => (x.min == null ? 999 : x.min) - (y.min == null ? 999 : y.min));
+    let streak = false, last = null;
+    list.forEach(e => { if (last === e.team) streak = true; last = e.team; });
+    if (streak) return ans === "Y" ? 1 : 0.5;                     // "No" was true until the streak happened
+    return ans === "N" ? 1 : 0;
   }
   return 0;
 }
@@ -653,7 +718,16 @@ function makeBots() {
   const qs = buildQuestions(DEMO_MATCH);
   return BOT_NAMES.map((name, i) => {
     const r = mulberry(i * 7919 + 13), answers = {};
-    qs.forEach(q => { answers[q.id] = (q.id === "winner" && r() < 0.7) ? "H" : q.opts[Math.floor(r() * q.opts.length)].id; });
+    qs.forEach(q => {
+      if (q.kind === "scoreline") { answers[q.id] = Math.floor(r() * 4) + "-" + Math.floor(r() * 4); return; }
+      if (q.multi) {
+        const idxA = Math.floor(r() * q.opts.length);
+        let idxB = Math.floor(r() * q.opts.length); if (idxB === idxA) idxB = (idxB + 1) % q.opts.length;
+        answers[q.id] = q.opts[idxA].id + "|" + q.opts[idxB].id;
+        return;
+      }
+      answers[q.id] = q.opts[Math.floor(r() * q.opts.length)].id;
+    });
     return { matchId: "demo", name, team: "H", answers, pen: 3, ts: i + 1 };
   });
 }
@@ -701,7 +775,8 @@ async function espnLive(m) {
           events: (cp.details || []).filter(x => x.scoringPlay).map(x => ({
             min: parseInt(x.clock && x.clock.displayValue, 10) || null,
             team: String(x.team && x.team.id) === String(home.team.id) ? "H" : "A",
-            player: (x.athletesInvolved && x.athletesInvolved[0] && (x.athletesInvolved[0].displayName || x.athletesInvolved[0].fullName)) || "Unknown"
+            player: (x.athletesInvolved && x.athletesInvolved[0] && (x.athletesInvolved[0].displayName || x.athletesInvolved[0].fullName)) || "Unknown",
+            assist: (x.athletesInvolved && x.athletesInvolved[1] && (x.athletesInvolved[1].displayName || x.athletesInvolved[1].fullName)) || null
           }))
         };
       }
@@ -876,13 +951,13 @@ function setupTeamPick() {
   const m = curMatch();
   [["H", m.home], ["A", m.away]].forEach(([s, t]) => {
     setFlag($("pickFlag" + s), t.code); $("pickName" + s).textContent = t.name;
-    $("pickSub" + s).textContent = t.stars.length ? "You get " + t.stars[0] : "You get a random player";
+    $("pickSub" + s).textContent = t.atk.length ? "You get " + t.atk[0] : "You get a random player";
   });
 }
 document.querySelectorAll(".teamcard").forEach(btn => btn.addEventListener("click", () => {
   const m = curMatch(); S.side = btn.dataset.side;
   const t = S.side === "H" ? m.home : m.away;
-  S.player = t.stars.length ? t.stars[0] : t.name + " #" + SHIRTS[Math.floor(rnd() * SHIRTS.length)];
+  S.player = t.atk.length ? t.atk[0] : t.name + " #" + SHIRTS[Math.floor(rnd() * SHIRTS.length)];
   startPenalty();
 }));
 
@@ -947,7 +1022,7 @@ $("toQuiz").onclick = () => {
   const m = curMatch();
   if (isLocked(m)) { toast("Predictions are closed."); go("sBoard"); return; }
   Q.qs = buildQuestions(m); Q.i = 0; Q.editing = false;
-  Q.ans = { winner: S.side };                       // start with the team they shot for
+  Q.ans = {};
   renderQuiz(); go("sQuiz");
 };
 function renderQuiz() {
@@ -956,18 +1031,62 @@ function renderQuiz() {
   $("qFill").style.width = ((Q.i + 1) / Q.qs.length * 100) + "%";
   $("qTag").textContent = q.tag; $("qText").textContent = q.text;
   const box = $("qOpts"); box.innerHTML = "";
-  box.className = "opts" + (q.opts.length <= 3 && q.kind !== "count" ? " one" : "");
-  q.opts.forEach(o => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (Q.ans[q.id] === o.id ? " on" : ""); b.textContent = o.label;
-    b.onclick = () => { Q.ans[q.id] = o.id; renderQuiz(); clearTimeout(Q.timer); const at = Q.i; Q.timer = setTimeout(() => { if (Q.i === at && current === "sQuiz") advance(); }, 280); };
-    box.appendChild(b);
-  });
+  if (q.kind === "scoreline") {
+    box.className = "opts one";
+    if (!Q.ans[q.id]) Q.ans[q.id] = "0-0";
+    const [ph, pa] = Q.ans[q.id].split("-").map(Number);
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "display:flex;align-items:center;justify-content:center;gap:16px;padding:6px 0";
+    const stepper = (label, val, onChange) => {
+      const col = document.createElement("div"); col.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:10px";
+      const lab = document.createElement("small"); lab.textContent = label; lab.style.cssText = "color:var(--muted);font-size:12px;font-weight:800;max-width:90px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      const row = document.createElement("div"); row.style.cssText = "display:flex;align-items:center;gap:10px";
+      const minus = document.createElement("button"); minus.type = "button"; minus.textContent = "−"; minus.className = "btn alt"; minus.style.cssText = "width:46px;height:46px;padding:0;font-size:22px;border-radius:12px";
+      const num = document.createElement("div"); num.textContent = val; num.style.cssText = "font-size:34px;font-weight:900;width:48px;text-align:center";
+      const plus = document.createElement("button"); plus.type = "button"; plus.textContent = "+"; plus.className = "btn alt"; plus.style.cssText = "width:46px;height:46px;padding:0;font-size:22px;border-radius:12px";
+      minus.onclick = () => onChange(Math.max(0, val - 1)); plus.onclick = () => onChange(Math.min(9, val + 1));
+      row.append(minus, num, plus); col.append(lab, row); return col;
+    };
+    wrap.appendChild(stepper(q.teamH, ph, v => { Q.ans[q.id] = v + "-" + pa; renderQuiz(); }));
+    const vs = document.createElement("div"); vs.textContent = "-"; vs.style.cssText = "font-size:28px;font-weight:900;color:var(--gold);margin-top:26px";
+    wrap.appendChild(vs);
+    wrap.appendChild(stepper(q.teamA, pa, v => { Q.ans[q.id] = ph + "-" + v; renderQuiz(); }));
+    box.appendChild(wrap);
+  } else if (q.multi) {
+    box.className = "opts";
+    const picked = (Q.ans[q.id] || "").split("|").filter(Boolean);
+    const hint = document.createElement("div"); hint.style.cssText = "grid-column:1/-1;color:var(--muted);font-size:12px;font-weight:800;text-align:center;margin-bottom:4px";
+    hint.textContent = "Pick 2 · " + picked.length + " of 2 selected";
+    box.appendChild(hint);
+    q.opts.forEach(o => {
+      const on = picked.includes(o.id);
+      const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (on ? " on" : ""); b.textContent = o.label;
+      b.onclick = () => {
+        let cur = (Q.ans[q.id] || "").split("|").filter(Boolean);
+        if (cur.includes(o.id)) cur = cur.filter(x => x !== o.id);
+        else if (cur.length < 2) cur = cur.concat([o.id]);
+        else cur = [cur[1], o.id];                                 // swap out the older pick once 2 are chosen
+        Q.ans[q.id] = cur.join("|");
+        renderQuiz();
+        if (cur.length === 2) { clearTimeout(Q.timer); const at = Q.i; Q.timer = setTimeout(() => { if (Q.i === at && current === "sQuiz") advance(); }, 280); }
+      };
+      box.appendChild(b);
+    });
+  } else {
+    box.className = "opts" + (q.opts.length <= 3 && q.kind !== "count" ? " one" : "");
+    q.opts.forEach(o => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "opt" + (Q.ans[q.id] === o.id ? " on" : ""); b.textContent = o.label;
+      b.onclick = () => { Q.ans[q.id] = o.id; renderQuiz(); clearTimeout(Q.timer); const at = Q.i; Q.timer = setTimeout(() => { if (Q.i === at && current === "sQuiz") advance(); }, 280); };
+      box.appendChild(b);
+    });
+  }
   $("qPrev").style.visibility = Q.i > 0 && !Q.editing ? "visible" : "hidden";
-  $("qNext").disabled = !Q.ans[q.id];
+  $("qNext").disabled = q.multi ? ((Q.ans[q.id] || "").split("|").filter(Boolean).length !== 2) : !Q.ans[q.id];
   $("qNext").textContent = (Q.editing || Q.i === Q.qs.length - 1) ? "Review answers" : "Next";
 }
 function advance() {
-  if (!Q.ans[Q.qs[Q.i].id]) return;
+  const q = Q.qs[Q.i];
+  if (q.multi ? (Q.ans[q.id] || "").split("|").filter(Boolean).length !== 2 : !Q.ans[q.id]) return;
   if (Q.editing || Q.i >= Q.qs.length - 1) { openReview(); return; }
   Q.i++; renderQuiz();
 }
@@ -981,7 +1100,10 @@ function openReview() {
   Q.editing = false;
   const box = $("rvList"); box.innerHTML = ""; let missing = 0;
   Q.qs.forEach((q, i) => {
-    const o = q.opts.find(x => x.id === Q.ans[q.id]), ok = !!o, label = o ? o.label : "Pick one";
+    let ok, label;
+    if (q.kind === "scoreline") { const v = (Q.ans[q.id] || "0-0").split("-"); ok = true; label = q.teamH + " " + v[0] + " - " + v[1] + " " + q.teamA; }
+    else if (q.multi) { const picks = (Q.ans[q.id] || "").split("|").filter(Boolean); ok = picks.length === 2; label = ok ? picks.join(" & ") : "Pick 2"; }
+    else { const o = q.opts.find(x => x.id === Q.ans[q.id]); ok = !!o; label = o ? o.label : "Pick one"; }
     if (!ok) missing++;
     const r = document.createElement("button"); r.type = "button"; r.className = "rvrow" + (ok ? "" : " no");
     const l = document.createElement("div"); const t = document.createElement("span"); t.textContent = q.short; const s = document.createElement("small"); s.textContent = q.text;
@@ -1071,7 +1193,10 @@ function renderBoard({ preds, live }, m, qs) {
     const list = $("mineList"); list.innerHTML = "";
     qs.forEach(q => {
       const ansRaw = me.p.answers[q.id], pts = me.r.st[q.id];
-      const o = q.opts.find(x => x.id === ansRaw), label = o ? o.label : "-";
+      let label;
+      if (q.kind === "scoreline") { const v = (ansRaw || "0-0").split("-"); label = q.teamH + " " + v[0] + " - " + v[1] + " " + q.teamA; }
+      else if (q.multi) { const picks = (ansRaw || "").split("|").filter(Boolean); label = picks.length ? picks.join(" & ") : "-"; }
+      else { const o = q.opts.find(x => x.id === ansRaw); label = o ? o.label : "-"; }
       const tier = pts >= q.pts ? "p10" : (pts > 0 ? "p5" : "p0"), icon = pts >= q.pts ? "✓" : (pts > 0 ? "●" : "✗");
       const row = document.createElement("div"); row.className = "arow";
       const ic = document.createElement("span"); ic.className = "ic " + tier; ic.textContent = icon;
