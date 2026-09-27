@@ -540,6 +540,19 @@ function playerQ(team, side, listKey, id, pts, mode) {           // mode: "score
   return { id, kind: "windowSide", side, lo: 0, hi: 999, short: team.name + " to score", tag: team.name.toUpperCase(), pts,
     text: "Will " + team.name + " score at all?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] };
 }
+/* single-pick version: "Which TEAM midfielder scores?" plus a "no midfielder" option.
+   Replaces the old pick-2-for-an-assist question (same id, so old predictions still line up). */
+function midScorerQ(team, side, id, pts) {
+  const list = team.mid;
+  if (!(list && list.length >= 2)) return { id, kind: "windowSide", side, lo: 0, hi: 999, short: team.name + " midfielder to score", tag: team.name.toUpperCase(), pts,
+    text: "Will a " + team.name + " midfielder score?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] };
+  return {
+    id, kind: "scorerMidOne", side, players: list,
+    short: "Which " + team.name + " midfielder scores?", tag: team.name.toUpperCase(), pts,
+    text: "Which " + team.name + " midfielder scores?",
+    opts: list.map(n => ({ id: n, label: n })).concat([{ id: "none", label: "No midfielder scores" }])
+  };
+}
 function buildQuestions(m) {
   const H = m.home, A = m.away, qs = [];
   qs.push({ id: "scoreline", kind: "scoreline", short: "Exact score", tag: "MATCH", pts: 15, teamH: H.name, teamA: A.name,
@@ -547,8 +560,8 @@ function buildQuestions(m) {
   qs.push({ id: "goalwin", kind: "goalWindow", short: "Goal timing", tag: "MATCH", pts: 10, text: "When will there be a goal?", opts: GOAL_WINDOWS });
   qs.push(playerQ(H, "H", "atk", "atkH", 10, "scorer"));
   qs.push(playerQ(A, "A", "atk", "atkA", 10, "scorer"));
-  qs.push(playerQ(H, "H", "mid", "midH", 10, "assist"));
-  qs.push(playerQ(A, "A", "mid", "midA", 10, "assist"));
+  qs.push(midScorerQ(H, "H", "midH", 10));
+  qs.push(midScorerQ(A, "A", "midA", 10));
   qs.push({ id: "parity", kind: "parity", short: "Odd or even", tag: "MATCH", pts: 10, text: "Total goals: odd or even?", opts: [{ id: "odd", label: "Odd (1, 3, 5...)" }, { id: "even", label: "Even (0, 2, 4...)" }] });
   qs.push({ id: "halfcmp", kind: "halfCompare", short: "Which half", tag: "MATCH", pts: 10, text: "Which half will have more goals?", opts: [{ id: "first", label: "First half" }, { id: "second", label: "Second half" }, { id: "equal", label: "Equal" }] });
   qs.push({ id: "streak", kind: "streak", short: "Back-to-back goals", tag: "MATCH", pts: 5, text: "Will one team score twice in a row without reply?", opts: [{ id: "Y", label: "Yes" }, { id: "N", label: "No" }] });
@@ -641,6 +654,12 @@ function tieredFraction(q, ans, live) {
     const picks = (ans || "").split("|").filter(Boolean);
     return picks.some(p => names.some(n => nameMatch(n, p))) ? 1 : 0;
   }
+  if (q.kind === "scorerMidOne") {                                // single pick: which midfielder scores (or "no midfielder")
+    const names = evs(live).filter(e => e.team === q.side).map(e => e.player);
+    const midScored = names.some(n => q.players.some(p => nameMatch(n, p)));
+    if (ans === "none") return midScored ? 0 : 1;
+    return names.some(n => nameMatch(n, ans)) ? 1 : 0;
+  }
   if (q.kind === "assistTeam") {                                  // pick 2 midfielders, right if EITHER gets an assist
     const names = evs(live).filter(e => e.team === q.side && e.assist).map(e => e.assist);
     const picks = (ans || "").split("|").filter(Boolean);
@@ -687,12 +706,23 @@ function tieredFraction(q, ans, live) {
 const MANUAL_CREDIT = {
   "ENG_ESP": { "midH": ["Jude Bellingham"] }
 };
+/* The midfielder question used to ask for an ASSIST ("get an assist"), which ESPN's feed
+   never reliably reports. As of this code update it asks WHICH midfielder will SCORE
+   instead (same question ids, midH/midA, so nothing else has to change). Anyone who
+   already locked in an answer to the old assist version (i.e. before you pushed this
+   update live) keeps their pick, but is graded as a flat 10% — the full weight of that
+   question — since the assist version can't be fairly checked either way.
+   SET THIS to the exact moment you push this file live (UTC time). Anything predicted
+   before it = old assist question = flat 10%. Anything predicted at/after it = new
+   "which midfielder scores" question = graded for real. */
+const MID_QUESTION_CHANGE_TS = new Date("2026-09-27T15:45:00Z").getTime();  // 9:15 PM IST
 function evalPred(pred, live, qs) {
   const st = {}; let earned = 0, ok = 0, bad = 0;
   const credit = MANUAL_CREDIT[pred.matchId] || {};
   qs.forEach(q => {
     const ans = pred.answers[q.id];
     let frac = (ans && live) ? tieredFraction(q, ans, live) : 0;
+    if (ans && (q.id === "midH" || q.id === "midA") && pred.ts < MID_QUESTION_CHANGE_TS) frac = 1;
     const names = credit[q.id];
     if (names && ans) {
       const picks = String(ans).split("|");
